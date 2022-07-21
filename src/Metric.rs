@@ -1,6 +1,5 @@
 
 // String metric implementations
-
 // Using the Wagner-Fischer algorithm to compute the levenshtien distance of two strings
 pub fn lev(s0: &str, s1: &str) -> usize {
     let s0_chars: Vec<char> = s0.chars().collect();
@@ -13,6 +12,7 @@ pub fn lev(s0: &str, s1: &str) -> usize {
     let mut row: Vec<usize> = vec![0 as usize; len_1 + 1];
 
     let mut d0: usize = 0; 
+    let mut e: usize = 0;
 
     // initialization
     for i in 0..=len_1 {
@@ -20,7 +20,7 @@ pub fn lev(s0: &str, s1: &str) -> usize {
     }
 
     for i in 0..len_0 {
-        let mut e: usize = i + 1;
+        e = i + 1;
 
         for j in 0..len_1 {
             let c: usize = (s0_chars[i] != s1_chars[j]) as usize;
@@ -29,8 +29,8 @@ pub fn lev(s0: &str, s1: &str) -> usize {
                         row[j + 1] + 1, 
                         e + 1
                     ),
-                row[j] + c
-            ); 
+                    row[j] + c
+                ); 
 
             row[j] = e;
             e = d0;

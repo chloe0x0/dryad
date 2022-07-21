@@ -2,7 +2,7 @@
 mod tests {
     #[path = r"D:\Wattson\src\Metric.rs"]
     mod Metric;
-    use Metric::{lev, ham};
+    use Metric::{ham, lev};
     #[test]
     fn test_lev() {
         assert_eq!(lev("sitting", "kitten"), 3);
