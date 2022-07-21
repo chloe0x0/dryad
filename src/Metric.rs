@@ -24,11 +24,11 @@ pub fn lev(s0: &str, s1: &str) -> usize {
 
         for j in 0..len_1 {
             let c: usize = (s0_chars[i] != s1_chars[j]) as usize;
-            d0 = std::cmp::min (
-                std::cmp::min(
-                    row[j + 1] + 1, 
-                    e + 1
-                ),
+            d0 = std::cmp::min(
+                    std::cmp::min(
+                        row[j + 1] + 1, 
+                        e + 1
+                    ),
                 row[j] + c
             ); 
 
@@ -42,8 +42,18 @@ pub fn lev(s0: &str, s1: &str) -> usize {
     return row[len_1];
 }
 
+pub fn ham(s0: &str, s1: &str) -> usize {
+    assert_eq!(s0.chars().count(), s1.chars().count());
 
-fn main() {
+    let mut x: usize = 0;
+    for t in s0.chars().zip(s1.chars()) {
+        x += (t.0 != t.1) as usize;
+    }
+
+    return x;
+}
+
+fn main(){
     assert_eq!(lev("sitting", "kitten"), 3);
 }
 
