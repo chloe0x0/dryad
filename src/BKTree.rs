@@ -1,6 +1,11 @@
 //! Implementation of BK-Trees with strings in mind
 //! Metrics should be taken from metric.rs, but there is nothing stopping the curious from experimenting with custom string metrics
 
+// TODO
+// Use multithreading to speed up indexing and search
+
+
+
 mod metric;
 use metric::*;
 
@@ -9,7 +14,8 @@ use std::{
     io::{self, BufReader, BufRead}, 
     path::Path, 
     collections::{HashMap},
-    time::{Instant, Duration}
+    time::{Instant, Duration}, 
+    thread,
 };
 
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
@@ -21,10 +27,11 @@ fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
         .collect()
 }
 
+// BKNodes store their string value, as well as a vector of arcs weighted by the metric used
 #[derive(Debug)]
 struct BKNode {
     val: String,
-    children: Vec<(BKNode, usize)>,
+    children: Vec<(BKNode, usize)>, 
 }
 
 impl BKNode {
@@ -90,6 +97,7 @@ impl BKTree {
 }
 
 // Takes about 7 seconds to index a dictionary of 466k words, 6 if the cache is warmed up (maybe)
+// ^^ above is on an AMD Ryzen 3700U (base speed 2.3GHz)
 // reading the file into a vector is NOT the bottleneck
 // Perhaps there is a more optimal way of constructing the BK-Tree such that the time to insert is minimized for a given metric
 fn main() {
