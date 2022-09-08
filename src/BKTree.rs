@@ -4,6 +4,17 @@
 mod metric;
 use metric::*;
 
+use std::{fs::File, io::{self, BufReader, BufRead}, path::Path};
+
+fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
+    let file = File::open(path).expect("Could not open file!");
+    let buffer = BufReader::new(file);
+
+    buffer.lines()
+        .map(|x| x.expect("Could not read line {x}"))
+        .collect()
+}
+
 #[derive(Debug)]
 struct BKNode {
     val: String,
