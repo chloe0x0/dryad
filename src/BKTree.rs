@@ -37,7 +37,7 @@ impl BKTree {
                 self.root = Some(Box::new(BKNode::new(word)));
             } 
             Some(ref mut root) => {
-                let mut curr = &mut *self.root.unwrap();
+                let mut curr = &mut **root;
 
                 loop {
                     let dist: usize = (self.metric)(&curr.val[..], word);
@@ -53,8 +53,8 @@ impl BKTree {
                             );
                         }
                         Some(k) => {
-                            let (_, ref node) = curr.children[k];
-                            curr = Box::new(node);
+                            let (_, ref mut node) = curr.children[k];
+                            curr = node;
                         }
                     } 
                 }
