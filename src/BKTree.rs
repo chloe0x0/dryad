@@ -7,7 +7,7 @@ use metric::*;
 #[derive(Debug)]
 struct BKNode {
     val: String,
-    children: Vec<(usize, BKNode)>,
+    children: Vec<(BKNode, usize)>,
 }
 
 impl BKNode {
@@ -45,15 +45,15 @@ impl BKTree {
                         return;
                     }
 
-                    let x = curr.children.iter().position(|(k, _)| dist == *k);
+                    let x = curr.children.iter().position(|(_, k)| dist == *k);
                     match x {
                         None => {
                             curr.children.push(
-                                (dist, BKNode::new(word))
+                                (BKNode::new(word), dist)
                             );
                         }
                         Some(k) => {
-                            let (_, ref mut node) = curr.children[k];
+                            let (ref mut node, _) = curr.children[k];
                             curr = node;
                         }
                     } 
