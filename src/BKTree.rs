@@ -85,7 +85,7 @@ impl BKTree {
 
 fn main() {
     let mut t = BKTree::empty(lev);
-    t.read_corpus("../dicts/popular.txt");
+    t.read_corpus("../dicts/words.txt");
 
     println!("BK-Tree has {} nodes!", t.node_count);
 }
