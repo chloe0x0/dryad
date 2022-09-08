@@ -52,7 +52,7 @@ impl BKTree {
         let xs = read_lines(corpus);
 
         for word in xs.iter() {
-            self.add_word(&word[..]);
+            self.add_word(word.as_str());
         }
     }
     pub fn add_word(&mut self, word: &str) {
@@ -65,8 +65,8 @@ impl BKTree {
                 let mut curr = &mut **root;
 
                 loop {
-                    let dist: usize = (self.metric)(&curr.val[..], word);
-                    if dist == 0 as usize {
+                    let dist: usize = (self.metric)(curr.val.as_str(), word);
+                    if dist == 0 {
                         return;
                     }
                     
@@ -89,9 +89,13 @@ impl BKTree {
     }
 }
 
+// Takes about 7 seconds to index a dictionary of 466k words, 6 if the cache is warmed up (maybe)
+// reading the file into a vector is NOT the bottleneck
+// Perhaps there is a more optimal way of constructing the BK-Tree such that the time to insert is minimized for a given metric
 fn main() {
-    let start = Instant::now();
     let mut t = BKTree::empty(lev);
+    let start = Instant::now();
     t.read_corpus("../dicts/words.txt");
-    println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, start.elapsed().as_secs());
+    let end = start.elapsed().as_secs();
+    println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, end);
 }
