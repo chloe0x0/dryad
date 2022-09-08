@@ -1,9 +1,8 @@
-
 // String metric implementations
 // Using the Wagner-Fischer algorithm to compute the levenshtien distance of two strings
 pub fn lev(s0: &str, s1: &str) -> usize {
     let s0_chars: Vec<char> = s0.chars().collect();
-    let s1_chars: Vec<char> = s1.chars().collect();    
+    let s1_chars: Vec<char> = s1.chars().collect();
 
     // get lengths of strings
     let len_0: usize = s0_chars.len();
@@ -11,7 +10,7 @@ pub fn lev(s0: &str, s1: &str) -> usize {
 
     let mut row: Vec<usize> = vec![0 as usize; len_1 + 1];
 
-    let mut d0: usize = 0; 
+    let mut d0: usize = 0;
     let mut e: usize = 0;
 
     // initialization
@@ -24,13 +23,7 @@ pub fn lev(s0: &str, s1: &str) -> usize {
 
         for j in 0..len_1 {
             let c: usize = (s0_chars[i] != s1_chars[j]) as usize;
-            d0 = std::cmp::min(
-                    std::cmp::min(
-                        row[j + 1] + 1, 
-                        e + 1
-                    ),
-                    row[j] + c
-                ); 
+            d0 = std::cmp::min(std::cmp::min(row[j + 1] + 1, e + 1), row[j] + c);
 
             row[j] = e;
             e = d0;
@@ -53,7 +46,6 @@ pub fn ham(s0: &str, s1: &str) -> usize {
     return x;
 }
 
-fn main(){
+fn main() {
     assert_eq!(lev("sitting", "kitten"), 3);
 }
-

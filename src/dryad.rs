@@ -1,5 +1,7 @@
 mod metric;
 use metric::*;
+mod BKTree;
+use BKTree::*;
 use std::Vec;
 use std::collections::Hashset;
 
@@ -8,8 +10,7 @@ use std::collections::Hashset;
 
 
 pub struct Dryad {
-    Dictionary: Hashset<String>,
-    Metric: 
+    tree: BKTree,
 }
 
 

@@ -19,3 +19,7 @@ mod tests {
         assert_eq!(ham("101", "000"), 2);
     }
 }
+
+fn main() {
+    println!("Hello World!");
+}
