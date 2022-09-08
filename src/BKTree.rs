@@ -4,7 +4,13 @@
 mod metric;
 use metric::*;
 
-use std::{fs::File, io::{self, BufReader, BufRead}, path::Path};
+use std::{
+    fs::File, 
+    io::{self, BufReader, BufRead}, 
+    path::Path, 
+    collections::{HashMap},
+    time::{Instant, Duration}
+};
 
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
     let file = File::open(path).expect("Could not open file!");
@@ -63,7 +69,7 @@ impl BKTree {
                     if dist == 0 as usize {
                         return;
                     }
-
+                    
                     let x = curr.children.iter().position(|(_, k)| dist == *k);
                     match x {
                         None => {
@@ -84,8 +90,8 @@ impl BKTree {
 }
 
 fn main() {
+    let start = Instant::now();
     let mut t = BKTree::empty(lev);
     t.read_corpus("../dicts/words.txt");
-
-    println!("BK-Tree has {} nodes!", t.node_count);
+    println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, start.elapsed().as_secs());
 }
