@@ -42,7 +42,15 @@ impl BKTree {
     pub fn empty(f: fn(&str, &str) -> usize) -> Self {
         BKTree { root: None, metric: f, node_count: 0 }
     }
+    pub fn read_corpus(&mut self, corpus: impl AsRef<Path>) {
+        let xs = read_lines(corpus);
+
+        for word in xs.iter() {
+            self.add_word(&word[..]);
+        }
+    }
     pub fn add_word(&mut self, word: &str) {
+        self.node_count += 1;
         match self.root {
             None => {
                 self.root = Some(Box::new(BKNode::new(word)));
@@ -72,17 +80,12 @@ impl BKTree {
                 }
             }
         }
-        self.node_count += 1;
     }
 }
 
 fn main() {
-    let corpus = read_lines("../dicts/popular.txt");
-
-    println!("len(corpus) := {}", corpus.len());
-
     let mut t = BKTree::empty(lev);
-    for word in corpus.iter() {
-        t.add_word(&word[..]);
-    }
+    t.read_corpus("../dicts/popular.txt");
+
+    println!("BK-Tree has {} nodes!", t.node_count);
 }
