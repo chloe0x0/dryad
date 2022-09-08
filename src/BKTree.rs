@@ -51,6 +51,7 @@ impl BKTree {
                             curr.children.push(
                                 (BKNode::new(word), dist)
                             );
+                            return;
                         }
                         Some(k) => {
                             let (ref mut node, _) = curr.children[k];
