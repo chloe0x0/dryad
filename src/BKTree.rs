@@ -77,8 +77,12 @@ impl BKTree {
 }
 
 fn main() {
-    let  n = BKNode::new("Chloe");
-    println!("{:?}", n);
+    let corpus = read_lines("../dicts/popular.txt");
 
-    let t = BKTree::empty(lev);
+    println!("len(corpus) := {}", corpus.len());
+
+    let mut t = BKTree::empty(lev);
+    for word in corpus.iter() {
+        t.add_word(&word[..]);
+    }
 }
