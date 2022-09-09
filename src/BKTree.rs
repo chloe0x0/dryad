@@ -13,7 +13,7 @@ use std::{
     fs::File, 
     io::{self, BufReader, BufRead}, 
     path::Path, 
-    collections::{HashMap},
+    collections::{HashMap, VecDeque},
     time::{Instant, Duration}, 
     thread,
 };
@@ -31,7 +31,7 @@ fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
 #[derive(Debug)]
 struct BKNode {
     val: String,
-    children: Vec<(BKNode, usize)>, 
+    children: Vec<(BKNode, isize)>, 
 }
 
 impl BKNode {
@@ -47,12 +47,12 @@ impl BKNode {
 
 pub struct BKTree {
     root: Option<Box<BKNode>>,
-    metric: fn(&str, &str) -> usize,
-    node_count: usize,
+    metric: fn(&str, &str) -> isize,
+    node_count: isize,
 }
 
 impl BKTree {
-    pub fn new(f: fn(&str, &str) -> usize) -> Self {
+    pub fn new(f: fn(&str, &str) -> isize) -> Self {
         BKTree { root: None, metric: f, node_count: 0 }
     }
     pub fn read_corpus(&mut self, corpus: impl AsRef<Path>) {
@@ -72,7 +72,7 @@ impl BKTree {
                 let mut curr = &mut **root;
 
                 loop {
-                    let dist: usize = (self.metric)(curr.val.as_str(), word);
+                    let dist: isize = (self.metric)(curr.val.as_str(), word);
                     if dist == 0 {
                         return;
                     }
@@ -94,6 +94,37 @@ impl BKTree {
             }
         }
     }
+    pub fn spell_check(&self, word: &str, k: isize) -> Option<&String> {
+        match self.root {
+            None => None,
+            Some(ref root) => {
+                let mut S: VecDeque<&BKNode> = VecDeque::new();
+                S.push_back(root);
+
+                let mut best_node: Option<&BKNode> = None;
+                let mut best_k: isize = isize::MAX;
+
+                while let Some(u) = S.pop_front() {
+                    let k_u = (self.metric)(&u.val, word);
+                    if k_u < best_k {
+                        best_node = Some(&u);
+                        best_k = k_u;
+                    }
+
+                    for v in u.children.iter() {
+                        let v_node = &(v.0);
+                        let k_uv = (self.metric)(&u.val, &v_node.val);
+                        // Cutoff criterion
+                        if (k_uv - k_u).abs() < best_k {
+                            S.push_back(v_node);
+                        }
+                    }
+                }
+
+                Some(&best_node.unwrap().val)
+            }
+        }
+    }
 }
 
 // Takes about 7 seconds to index a dictionary of 466k words, 6 if the cache is warmed up (maybe)
@@ -103,7 +134,9 @@ impl BKTree {
 fn main() {
     let mut t = BKTree::new(lev);
     let start = Instant::now();
-    t.read_corpus("../dicts/words.txt");
+    t.read_corpus("../dicts/popular.txt");
     let end = start.elapsed().as_secs();
     println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, end);
+
+    println!("chexk? Did you mean: {}", t.spell_check("chexk", 1).unwrap()); 
 }
