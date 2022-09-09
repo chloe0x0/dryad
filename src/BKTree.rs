@@ -131,11 +131,11 @@ impl BKTree {
         let mut corrections: Vec<(String, String)> = Vec::new();
 
         for word in words {
-            let correction = self.spell_check_word(&word, 1).unwrap();
+            let correction = self.spell_check_word(&word, 1);
 
-            match correction == &word {
-                true => continue,
-                false => corrections.push((String::from(word), String::from(correction)))
+            match correction {
+                None => continue,
+                Some(k) => corrections.push((String::from(word), String::from(k)))
             }
         }
 
