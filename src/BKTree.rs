@@ -57,6 +57,11 @@ impl BKTree {
             self.add_word(word.as_str());
         }
     }
+    pub fn read_vec(&mut self, corpus: Vec<&str>) {
+        for word in corpus.iter() {
+            self.add_word(word);
+        }
+    }
     pub fn add_word(&mut self, word: &str) {
         self.node_count += 1;
         match self.root {
@@ -115,8 +120,8 @@ impl BKTree {
                         }
                     }
                 }
-
-                Some(&best_node.unwrap().val)
+                
+                if &best_node.unwrap().val.as_str() == &word { None } else { Some(&best_node.unwrap().val) }
             }
         }
     }

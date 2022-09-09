@@ -26,20 +26,14 @@ mod tests {
 }
 
 fn main() {
-    let mut t: BKTree = BKTree::new(lev);
-    t.read_corpus("../dicts/MIT.txt");
-    t.read_corpus("../dicts/kaggle.txt");
-    println!("Completed indexing");
+    // build a system similar to git command spell check with Dryad
+    let mut git = BKTree::new(lev);
+    git.read_vec(vec!["push", "pull", "branch", "commit"]);
+    let cmd = "pull";
 
-    let mut text = String::new();
-    io::stdin().read_line(&mut text).expect("Could not read line");
+    match git.spell_check_word(cmd, 1) {
+        None => println!("Executed {}", cmd),
+        Some(k) => println!("git: '{}' is not a git command. See 'git --help'.\n\nThe most similar command is\n\t{}", cmd, k)
+    }
 
-    let corrections = t.spell_check(text.as_str());
-
-    for word in text.split(" ") {
-        match corrections.iter().find(|(x, _)| x == word) {
-            None => print!("{} ", word),
-            Some(c) => print!("++{}++ ", c.1)
-        }
-    }   
 }
