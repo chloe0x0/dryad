@@ -12,8 +12,3 @@ use std::collections::Hashset;
 pub struct Dryad {
     tree: BKTree,
 }
-
-
-fn main() {
-    println!("Hello World!");
-}

@@ -1,6 +1,11 @@
 mod metric;
 use metric::{ham, lev};
 
+mod bktree;
+use bktree::*;
+
+use std::io;
+
 // unit tests for the string metrics
 #[cfg(test)]
 mod tests {
@@ -21,5 +26,18 @@ mod tests {
 }
 
 fn main() {
-    println!("Hello World!");
+    let mut t: BKTree = BKTree::new(lev);
+    t.read_corpus("../dicts/MIT.txt");
+
+    let mut text = String::new();
+    io::stdin().read_line(&mut text).expect("Could not read line");
+
+    let corrections = t.spell_check(text.as_str());
+
+    for word in text.split(" ") {
+        match corrections.iter().find(|(x, _)| x == word) {
+            None => print!("{} ", word),
+            Some(c) => print!("++{}++", c.1)
+        }
+    }   
 }

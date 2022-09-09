@@ -4,11 +4,6 @@
 // TODO
 // Use multithreading to speed up indexing and search
 
-
-
-mod metric;
-use metric::*;
-
 use std::{
     fs::File, 
     io::{self, BufReader, BufRead}, 
@@ -126,7 +121,7 @@ impl BKTree {
         }
     }
     pub fn spell_check(&self, text: &str) -> Vec<(String, String)> {
-        let mut words = text.split(" ");
+        let words = text.split(" ");
 
         let mut corrections: Vec<(String, String)> = Vec::new();
 
@@ -147,18 +142,3 @@ impl BKTree {
 // ^^ above is on an AMD Ryzen 3700U (base speed 2.3GHz)
 // reading the file into a vector is NOT the bottleneck
 // Perhaps there is a more optimal way of constructing the BK-Tree such that the time to insert is minimized for a given metric
-fn main() {
-    let mut t = BKTree::new(lev);
-    let start = Instant::now();
-    // t.read_corpus("../dicts/kaggle.txt");
-    t.read_corpus("../dicts/MIT.txt");
-    let end = start.elapsed().as_secs();
-    println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, end);
-    
-    let text = "I lovw tp play chevss";
-    let corrections = t.spell_check(text);
-
-    for correction in corrections.iter() {
-        println!("{}? Did you mean {}?", correction.0, correction.1);
-    }
-}

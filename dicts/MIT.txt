@@ -5788,7 +5788,6 @@ movies
 moving
 mozambique
 mozilla
-mp
 mpeg
 mpegs
 mpg
@@ -6043,12 +6042,6 @@ novelty
 november
 now
 nowhere
-np
-nr
-ns
-nsw
-nt
-ntsc
 nu
 nuclear
 nude
@@ -6178,10 +6171,7 @@ only
 ons
 ontario
 onto
-oo
-ooo
 oops
-op
 open
 opened
 opening
@@ -6805,10 +6795,6 @@ powerful
 powerpoint
 powers
 powerseller
-pp
-ppc
-ppm
-pr
 practical
 practice
 practices
@@ -7688,15 +7674,6 @@ rows
 roy
 royal
 royalty
-rp
-rpg
-rpm
-rr
-rrp
-rs
-rss
-rt
-ru
 rubber
 ruby
 rug
@@ -8727,8 +8704,6 @@ sys
 system
 systematic
 systems
-t
-ta
 tab
 table
 tables
@@ -8963,7 +8938,6 @@ thunder
 thursday
 thus
 thy
-ti
 ticket
 tickets
 tide
@@ -9215,10 +9189,7 @@ trusts
 truth
 try
 trying
-ts
 tsunami
-tt
-tu
 tub
 tube
 tubes
