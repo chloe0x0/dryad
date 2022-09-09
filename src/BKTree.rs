@@ -94,7 +94,7 @@ impl BKTree {
             }
         }
     }
-    pub fn spell_check(&self, word: &str, k: isize) -> Option<&String> {
+    pub fn spell_check_word(&self, word: &str, k: isize) -> Option<&String> {
         match self.root {
             None => None,
             Some(ref root) => {
@@ -138,8 +138,8 @@ fn main() {
     let end = start.elapsed().as_secs();
     println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, end);
 
-    let string = "chess";
-    let check = t.spell_check(string, 1).unwrap();
+    let string = "cheKss";
+    let check = t.spell_check_word(string, 1).unwrap();
 
     match check == string {
         true => println!("Looks good!"),
