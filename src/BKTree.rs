@@ -14,10 +14,8 @@ use std::{
 };
 
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
-    let file = File::open(path).expect("Could not open file!");
-    let buffer = BufReader::new(file);
-
-    buffer.lines()
+    BufReader::new(File::open(path).expect("Could not open file!"))
+        .lines()
         .map(|x| x.expect("Could not read line {x}"))
         .collect()
 }
@@ -126,20 +124,10 @@ impl BKTree {
         }
     }
     pub fn spell_check(&self, text: &str) -> Vec<(String, String)> {
-        let words = text.split(" ");
-
-        let mut corrections: Vec<(String, String)> = Vec::new();
-
-        for word in words {
-            let correction = self.spell_check_word(&word, 1);
-
-            match correction {
-                None => continue,
-                Some(k) => corrections.push((String::from(word), String::from(k)))
-            }
-        }
-
-        corrections
+        text.split(" ")
+            .filter(|x| !self.spell_check_word(&x, 1).is_none())
+            .map(|x| (x.to_string(), self.spell_check_word(x, 1).unwrap().to_string()))
+            .collect()
     }
 }
 
