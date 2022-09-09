@@ -134,9 +134,16 @@ impl BKTree {
 fn main() {
     let mut t = BKTree::new(lev);
     let start = Instant::now();
-    t.read_corpus("../dicts/popular.txt");
+    t.read_corpus("../dicts/words.txt");
     let end = start.elapsed().as_secs();
     println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, end);
 
-    println!("chexk? Did you mean: {}", t.spell_check("chexk", 1).unwrap()); 
+    let string = "cheKss";
+    let check = t.spell_check(string, 1).unwrap();
+
+    match check == string {
+        true => println!("Looks good!"),
+        false => println!("did you mean {}?", check)
+    }
+
 }
