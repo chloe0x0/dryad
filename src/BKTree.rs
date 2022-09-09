@@ -52,7 +52,7 @@ pub struct BKTree {
 }
 
 impl BKTree {
-    pub fn empty(f: fn(&str, &str) -> usize) -> Self {
+    pub fn new(f: fn(&str, &str) -> usize) -> Self {
         BKTree { root: None, metric: f, node_count: 0 }
     }
     pub fn read_corpus(&mut self, corpus: impl AsRef<Path>) {
@@ -101,7 +101,7 @@ impl BKTree {
 // reading the file into a vector is NOT the bottleneck
 // Perhaps there is a more optimal way of constructing the BK-Tree such that the time to insert is minimized for a given metric
 fn main() {
-    let mut t = BKTree::empty(lev);
+    let mut t = BKTree::new(lev);
     let start = Instant::now();
     t.read_corpus("../dicts/words.txt");
     let end = start.elapsed().as_secs();
