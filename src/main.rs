@@ -28,6 +28,8 @@ mod tests {
 fn main() {
     let mut t: BKTree = BKTree::new(lev);
     t.read_corpus("../dicts/MIT.txt");
+    t.read_corpus("../dicts/kaggle.txt");
+    println!("Completed indexing");
 
     let mut text = String::new();
     io::stdin().read_line(&mut text).expect("Could not read line");
@@ -37,7 +39,7 @@ fn main() {
     for word in text.split(" ") {
         match corrections.iter().find(|(x, _)| x == word) {
             None => print!("{} ", word),
-            Some(c) => print!("++{}++", c.1)
+            Some(c) => print!("++{}++ ", c.1)
         }
     }   
 }
