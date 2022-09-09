@@ -131,7 +131,7 @@ impl BKTree {
         let mut corrections: Vec<(String, String)> = Vec::new();
 
         for word in words {
-            let correction = self.spell_check_word(&word, 5).unwrap();
+            let correction = self.spell_check_word(&word, 1).unwrap();
 
             match correction == &word {
                 true => continue,
@@ -150,9 +150,8 @@ impl BKTree {
 fn main() {
     let mut t = BKTree::new(lev);
     let start = Instant::now();
+    // t.read_corpus("../dicts/kaggle.txt");
     t.read_corpus("../dicts/MIT.txt");
-    t.read_corpus("../dicts/popular.txt");
-    t.read_corpus("../dicts/english3.txt");
     let end = start.elapsed().as_secs();
     println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, end);
     

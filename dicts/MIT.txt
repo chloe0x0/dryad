@@ -1,6 +1,4 @@
 a
-aa
-aaa
 aaron
 ab
 abandoned
@@ -434,7 +432,6 @@ anytime
 anyway
 anywhere
 aol
-ap
 apache
 apart
 apartment
@@ -1092,8 +1089,6 @@ boxes
 boxing
 boy
 boys
-bp
-br
 bra
 bracelet
 bracelets
@@ -2159,9 +2154,7 @@ covers
 cow
 cowboy
 cox
-cp
 cpu
-cr
 crack
 cradle
 craft
@@ -2748,7 +2741,6 @@ downloads
 downtown
 dozen
 dozens
-dp
 dpi
 dr
 draft
@@ -3069,7 +3061,6 @@ environmental
 environments
 enzyme
 eos
-ep
 epa
 epic
 epinions
@@ -3633,8 +3624,6 @@ fountain
 four
 fourth
 fox
-fp
-fr
 fraction
 fragrance
 fragrances
@@ -3684,10 +3673,6 @@ frost
 frozen
 fruit
 fruits
-fs
-ft
-ftp
-fu
 fuck
 fucked
 fucking
@@ -3906,10 +3891,6 @@ governmental
 governments
 governor
 govt
-gp
-gpl
-gps
-gr
 grab
 grace
 grad
@@ -3978,11 +3959,6 @@ growing
 grown
 grows
 growth
-gs
-gsm
-gst
-gt
-gtk
 guam
 guarantee
 guaranteed
@@ -4015,7 +3991,6 @@ guyana
 guys
 gym
 gzip
-h
 ha
 habitat
 habits
@@ -4172,7 +4147,6 @@ heroes
 herself
 hewlett
 hey
-hh
 hi
 hidden
 hide
@@ -4212,8 +4186,6 @@ hitachi
 hits
 hitting
 hiv
-hk
-hl
 ho
 hobbies
 hobby
@@ -4301,16 +4273,9 @@ how
 howard
 however
 howto
-hp
-hq
-hr
 href
-hrs
-hs
-ht
 html
 http
-hu
 hub
 hudson
 huge
@@ -4685,7 +4650,6 @@ involving
 io
 ion
 iowa
-ip
 ipaq
 ipod
 ips
@@ -4830,7 +4794,6 @@ journals
 journey
 joy
 joyce
-jp
 jpeg
 jpg
 jr
@@ -5310,11 +5273,6 @@ low
 lower
 lowest
 lows
-lp
-ls
-lt
-ltd
-lu
 lucas
 lucia
 luck
@@ -8822,12 +8780,7 @@ taxation
 taxes
 taxi
 taylor
-tb
-tba
-tc
-tcp
-td
-te
+to
 tea
 teach
 teacher
@@ -8916,10 +8869,6 @@ textile
 textiles
 texts
 texture
-tf
-tft
-tgp
-th
 thai
 thailand
 than
@@ -9127,8 +9076,6 @@ toxic
 toy
 toyota
 toys
-tp
-tr
 trace
 track
 trackback
