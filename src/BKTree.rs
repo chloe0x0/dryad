@@ -48,7 +48,7 @@ impl BKNode {
 pub struct BKTree {
     root: Option<Box<BKNode>>,
     metric: fn(&str, &str) -> isize,
-    node_count: isize,
+    node_count: usize,
 }
 
 impl BKTree {
