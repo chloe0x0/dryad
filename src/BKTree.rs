@@ -138,7 +138,7 @@ fn main() {
     let end = start.elapsed().as_secs();
     println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, end);
 
-    let string = "cheKss";
+    let string = "chess";
     let check = t.spell_check(string, 1).unwrap();
 
     match check == string {
