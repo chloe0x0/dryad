@@ -125,6 +125,22 @@ impl BKTree {
             }
         }
     }
+    pub fn spell_check(&self, text: &str) -> Vec<(String, String)> {
+        let mut words = text.split(" ");
+
+        let mut corrections: Vec<(String, String)> = Vec::new();
+
+        for word in words {
+            let correction = self.spell_check_word(&word, 5).unwrap();
+
+            match correction == &word {
+                true => continue,
+                false => corrections.push((String::from(word), String::from(correction)))
+            }
+        }
+
+        corrections
+    }
 }
 
 // Takes about 7 seconds to index a dictionary of 466k words, 6 if the cache is warmed up (maybe)
@@ -134,16 +150,16 @@ impl BKTree {
 fn main() {
     let mut t = BKTree::new(lev);
     let start = Instant::now();
-    t.read_corpus("../dicts/words.txt");
+    t.read_corpus("../dicts/MIT.txt");
+    t.read_corpus("../dicts/popular.txt");
+    t.read_corpus("../dicts/english3.txt");
     let end = start.elapsed().as_secs();
     println!("Time taken to index dictionary of {} words: {} seconds", t.node_count, end);
+    
+    let text = "I lovw tp play chevss";
+    let corrections = t.spell_check(text);
 
-    let string = "cheKss";
-    let check = t.spell_check_word(string, 1).unwrap();
-
-    match check == string {
-        true => println!("Looks good!"),
-        false => println!("did you mean {}?", check)
+    for correction in corrections.iter() {
+        println!("{}? Did you mean {}?", correction.0, correction.1);
     }
-
 }
