@@ -8,9 +8,7 @@ use std::{
     fs::File, 
     io::{self, BufReader, BufRead}, 
     path::Path, 
-    collections::{HashMap, VecDeque},
-    time::{Instant, Duration}, 
-    thread,
+    collections::VecDeque,
 };
 
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
@@ -100,7 +98,7 @@ impl BKTree {
                 S.push_back(root);
 
                 let mut best_node: Option<&BKNode> = None;
-                let mut best_k: isize = isize::MAX;
+                let mut best_k = isize::MAX;
 
                 while let Some(u) = S.pop_front() {
                     let k_u = (self.metric)(&u.val, word);
@@ -123,11 +121,22 @@ impl BKTree {
             }
         }
     }
+    #[inline(always)]
     pub fn spell_check(&self, text: &str) -> Vec<(String, String)> {
         text.split(" ")
             .filter(|x| !self.spell_check_word(&x, 1).is_none())
             .map(|x| (x.to_string(), self.spell_check_word(x, 1).unwrap().to_string()))
             .collect()
+    }
+    pub fn top_n_choices(&self, word: &str) -> Option<Vec<&String>> {
+        match self.root {
+            None => None,
+            Some(ref root) => {
+                let v = Vec::new();
+
+                Some(v)
+            }
+        }
     }
 }
 
