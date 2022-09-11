@@ -91,7 +91,7 @@ impl BKTree {
             }
         }
     }
-    pub fn spell_check_word(&self, word: &str, k: isize) -> Option<&String> {
+    pub fn spell_check_word(&self, word: &str, k: usize) -> Option<&String> {
         match self.root {
             None => None,
             Some(ref root) => {
