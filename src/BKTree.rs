@@ -109,8 +109,7 @@ impl BKTree {
                     }
 
                     for v in u.children.iter() {
-                        let v_node = &(v.0);
-                        let k_uv = (self.metric)(&u.val, &v_node.val);
+                        let (v_node, k_uv) = v;
                         // Cutoff criterion
                         if ((k_uv - k_u) as isize).abs() < best_k.try_into().unwrap() {
                             S.push_back(v_node);
