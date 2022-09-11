@@ -9,6 +9,7 @@ use std::{
     io::{self, BufReader, BufRead}, 
     path::Path, 
     collections::VecDeque,
+    convert::TryInto
 };
 
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
@@ -22,7 +23,7 @@ fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
 #[derive(Debug)]
 struct BKNode {
     val: String,
-    children: Vec<(BKNode, isize)>, 
+    children: Vec<(BKNode, usize)>, 
 }
 
 impl BKNode {
@@ -38,12 +39,12 @@ impl BKNode {
 
 pub struct BKTree {
     root: Option<Box<BKNode>>,
-    metric: fn(&str, &str) -> isize,
+    metric: fn(&str, &str) -> usize,
     node_count: usize,
 }
 
 impl BKTree {
-    pub fn new(f: fn(&str, &str) -> isize) -> Self {
+    pub fn new(f: fn(&str, &str) -> usize) -> Self {
         BKTree { root: None, metric: f, node_count: 0 }
     }
     pub fn read_corpus(&mut self, corpus: impl AsRef<Path>) {
@@ -68,7 +69,7 @@ impl BKTree {
                 let mut curr = &mut **root;
 
                 loop {
-                    let dist: isize = (self.metric)(curr.val.as_str(), word);
+                    let dist = (self.metric)(curr.val.as_str(), word);
                     if dist == 0 {
                         return;
                     }
@@ -98,7 +99,7 @@ impl BKTree {
                 S.push_back(root);
 
                 let mut best_node: Option<&BKNode> = None;
-                let mut best_k = isize::MAX;
+                let mut best_k = usize::MAX;
 
                 while let Some(u) = S.pop_front() {
                     let k_u = (self.metric)(&u.val, word);
@@ -111,7 +112,7 @@ impl BKTree {
                         let v_node = &(v.0);
                         let k_uv = (self.metric)(&u.val, &v_node.val);
                         // Cutoff criterion
-                        if (k_uv - k_u).abs() < best_k {
+                        if ((k_uv - k_u) as isize).abs() < best_k.try_into().unwrap() {
                             S.push_back(v_node);
                         }
                     }
