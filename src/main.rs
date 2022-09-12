@@ -8,9 +8,9 @@ use std::io;
 
 fn main() {
     // build a system similar to git command spell check with Dryad
-    let mut git = BKTree::new(lev);
+    let mut git = BKTree::new(lev, None);
     git.read_vec(vec!["push", "pull", "branch", "commit"]);
-    let cmd = "comit";
+    let cmd = "comiitt";
 
     match git.spell_check_word(cmd, 1) {
         None => println!("Executed {}", cmd),

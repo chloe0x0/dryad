@@ -5,12 +5,14 @@
 // Use multithreading to speed up indexing and search
 
 use std::{
-    fs::File, 
-    io::{self, BufReader, BufRead}, 
-    path::Path, 
     collections::VecDeque,
-    convert::TryInto
+    convert::TryInto,
+    fs::File,
+    io::{self, BufRead, BufReader},
+    path::Path,
 };
+
+use regex::Regex;
 
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
     BufReader::new(File::open(path).expect("Could not open file!"))
@@ -23,29 +25,38 @@ fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
 #[derive(Debug)]
 struct BKNode {
     val: String,
-    children: Vec<(BKNode, usize)>, 
+    children: Vec<(BKNode, usize)>,
 }
 
 impl BKNode {
     fn new(s: &str) -> Self {
-        BKNode { val: s.to_string(), children: Vec::new() }
+        BKNode {
+            val: s.to_string(),
+            children: Vec::new(),
+        }
     }
 }
 
 // It would probably be useful to have an O(1) way of returning immediatley if a word is known to be in the dictionary
 // Can store a Hashset of all the Strings....
 // Sounds scary, lots of space O(k) for k unique words in the corpus,
-// Bloom filters should be killer for this 
+// Bloom filters should be killer for this
 
 pub struct BKTree {
     root: Option<Box<BKNode>>,
     metric: fn(&str, &str) -> usize,
     node_count: usize,
+    ignore_re: Option<Regex>,
 }
 
 impl BKTree {
-    pub fn new(f: fn(&str, &str) -> usize) -> Self {
-        BKTree { root: None, metric: f, node_count: 0 }
+    pub fn new(f: fn(&str, &str) -> usize, ig_re: Option<Regex>) -> Self {
+        BKTree {
+            root: None,
+            metric: f,
+            node_count: 0,
+            ignore_re: ig_re,
+        }
     }
     pub fn read_corpus(&mut self, corpus: impl AsRef<Path>) {
         let xs = read_lines(corpus);
@@ -60,11 +71,20 @@ impl BKTree {
         }
     }
     pub fn add_word(&mut self, word: &str) {
+        match self.ignore_re {
+            None => (),
+            Some(ref k) => {
+                if k.is_match(word) {
+                    return;
+                }
+            }
+        }
+
         self.node_count += 1;
         match self.root {
             None => {
                 self.root = Some(Box::new(BKNode::new(word)));
-            } 
+            }
             Some(ref mut root) => {
                 let mut curr = &mut **root;
 
@@ -73,20 +93,18 @@ impl BKTree {
                     if dist == 0 {
                         return;
                     }
-                    
+
                     let x = curr.children.iter().position(|(_, k)| dist == *k);
                     match x {
                         None => {
-                            curr.children.push(
-                                (BKNode::new(word), dist)
-                            );
+                            curr.children.push((BKNode::new(word), dist));
                             return;
                         }
                         Some(k) => {
                             let (ref mut node, _) = curr.children[k];
                             curr = node;
                         }
-                    } 
+                    }
                 }
             }
         }
@@ -116,8 +134,12 @@ impl BKTree {
                         }
                     }
                 }
-                
-                if &best_node.unwrap().val.as_str() == &word { None } else { Some(&best_node.unwrap().val) }
+
+                if &best_node.unwrap().val.as_str() == &word {
+                    None
+                } else {
+                    Some(&best_node.unwrap().val)
+                }
             }
         }
     }
@@ -125,7 +147,12 @@ impl BKTree {
     pub fn spell_check(&self, text: &str) -> Vec<(String, String)> {
         text.split(" ")
             .filter(|x| !self.spell_check_word(&x, 1).is_none())
-            .map(|x| (x.to_string(), self.spell_check_word(x, 1).unwrap().to_string()))
+            .map(|x| {
+                (
+                    x.to_string(),
+                    self.spell_check_word(x, 1).unwrap().to_string(),
+                )
+            })
             .collect()
     }
 }
