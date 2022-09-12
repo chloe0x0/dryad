@@ -130,7 +130,7 @@ impl BKTree {
                     } else {
                         k_u = (self.metric)(&u.val, word)
                     }
-                    
+
                     if k_u < best_k {
                         best_node = Some(&u);
                         best_k = k_u;

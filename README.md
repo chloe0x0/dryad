@@ -32,7 +32,7 @@ fn main() {
     tree.read_dict("../dicts/MIT.txt");
     tree.ignore(r"[0-9]+");
 
-    let mut input = String::from("Hello 215 wold 0");
+    let input = String::from("Hello 215 wold 0");
    
     // generate a Vec<(String, String)> in which the first element is the original string
     // and the second element is the suggested correction
