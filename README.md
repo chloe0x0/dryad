@@ -26,6 +26,9 @@ use metric::lev;
 
 fn main() {
     let mut tree = BKTree::new(lev);
+    // read_dict will split a txt file by lines and add each line to the tree
+    // the dicts subfolder contains various dictionaries
+    // MIT.txt is sourced from: https://www.mit.edu/~ecprice/wordlist.10000
     tree.read_dict("../dicts/MIT.txt");
     tree.ignore(r"[0-9]+");
 
