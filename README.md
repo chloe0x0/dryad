@@ -29,7 +29,7 @@ fn main() {
     tree.read_dict("../dicts/MIT.txt");
     tree.ignore(r"[0-9]+");
 
-    let mut input = String::from("Hello wold");
+    let mut input = String::from("Hello 215 wold 0");
    
     // generate a Vec<(String, String)> in which the first element is the original string
     // and the second element is the suggested correction
@@ -46,6 +46,28 @@ fn main() {
     }
 }
 ```
+
+will output
+```console
+> cargo run --release
+Hello 215 wold 0
+Hello 215 +world+ 0 
+```
+
+if the ignore regex is not specified to ignore numbers
+```console
+> cargo run --release
+Hello 215 wold 0
+Hello +a+ +world+ +a+ 
+``` 
+
+if the spell_check function does not ignore case
+```console
+Hello 215 wold 0
++hello+ 215 +world+ 0
+```
+the above happens because "Hello" is not in the loaded dictionary, but "hello" is
+this is the major motivation for including the case ignore parameter
 
 ### Create a git command checker
 if one gives git a command it does not recognize it will reccomend similarly spelled commands. 

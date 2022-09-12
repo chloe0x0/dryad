@@ -11,9 +11,9 @@ fn main() {
     tree.read_dict("../dicts/MIT.txt");
     tree.ignore(r"[0-9]+");
 
-    let mut input = String::from("Hello wold 0");
+    let mut input = String::from("Hello 215 wold 0");
    
-    let corrections = tree.spell_check(&input, true);
+    let corrections = tree.spell_check(&input, false);
 
     println!("{}", input);
 
