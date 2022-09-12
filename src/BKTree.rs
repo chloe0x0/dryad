@@ -174,8 +174,3 @@ impl BKTree {
             .collect()
     }
 }
-
-// Takes about 7 seconds to index a dictionary of 466k words, 6 if the cache is warmed up (maybe)
-// ^^ above is on an AMD Ryzen 3700U (base speed 2.3GHz)
-// reading the file into a vector is NOT the bottleneck
-// Perhaps there is a more optimal way of constructing the BK-Tree such that the time to insert is minimized for a given metric
