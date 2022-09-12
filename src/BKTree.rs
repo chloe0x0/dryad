@@ -58,6 +58,9 @@ impl BKTree {
             ignore_re: None,
         }
     }
+    pub fn ignore(&mut self, re: &str) {
+        self.ignore_re = Some(Regex::new(re).unwrap());
+    }
     pub fn read_corpus(&mut self, corpus: impl AsRef<Path>) {
         let xs = read_lines(corpus);
 
