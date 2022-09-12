@@ -50,12 +50,12 @@ pub struct BKTree {
 }
 
 impl BKTree {
-    pub fn new(f: fn(&str, &str) -> usize, ig_re: Option<Regex>) -> Self {
+    pub fn new(f: fn(&str, &str) -> usize) -> Self {
         BKTree {
             root: None,
             metric: f,
             node_count: 0,
-            ignore_re: ig_re,
+            ignore_re: None,
         }
     }
     pub fn read_corpus(&mut self, corpus: impl AsRef<Path>) {
