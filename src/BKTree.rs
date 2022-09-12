@@ -128,16 +128,6 @@ impl BKTree {
             .map(|x| (x.to_string(), self.spell_check_word(x, 1).unwrap().to_string()))
             .collect()
     }
-    pub fn top_n_choices(&self, word: &str) -> Option<Vec<&String>> {
-        match self.root {
-            None => None,
-            Some(ref root) => {
-                let v = Vec::new();
-
-                Some(v)
-            }
-        }
-    }
 }
 
 // Takes about 7 seconds to index a dictionary of 466k words, 6 if the cache is warmed up (maybe)
