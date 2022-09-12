@@ -1,5 +1,5 @@
 # Dryad 🌴
-A fast spell-checker anf fuzzy string searcher in Rust 
+A fast spell-checker and fuzzy string searcher in Rust 
 
 ## How does it work?
 BK-Trees 
