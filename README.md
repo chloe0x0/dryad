@@ -17,7 +17,7 @@ fn main() {
 ```
 
 ### Ignoring substrings that match a regex
-it may be the case that you do not want Dryad to suggest correcting digits. ie: changing 1 => "a"
+it may be the case that you do not want Dryad to suggest correcting digits. eg: changing 1 => "a"
 
 It is simple to specify an ignore regex. Any substrings which match this regex will simply be ignored
 ```rust

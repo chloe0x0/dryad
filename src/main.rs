@@ -13,7 +13,7 @@ fn main() {
 
     let input = String::from("Hello 215 wold 0");
 
-    let corrections = tree.spell_check(&input, false);
+    let corrections = tree.spell_check(&input, true);
 
     println!("{}", input);
 
