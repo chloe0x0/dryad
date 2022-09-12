@@ -81,7 +81,6 @@ fn main() {
 2. Better English dictionary
 3. Benchmark
 4. Fuzzy String Search API
-5. Add a function on the BK-Tree structure which would allow it to ignore any strings which match a particular regex
 
 ## MISC
 1. Look into publishing as a crate on crates.io
