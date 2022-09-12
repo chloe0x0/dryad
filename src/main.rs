@@ -10,12 +10,9 @@ fn main() {
     // build a system similar to git command spell check with Dryad
     let mut git = BKTree::new(lev);
     git.read_vec(vec!["push", "pull", "branch", "commit"]);
-    let cmd = "comiitt";
+    git.ignore(r"[0-9]+");
+    let cmd = "comiitt 2147190 128590 85 brach";
 
-    match git.spell_check_word(cmd, 1) {
-        None => println!("Executed {}", cmd),
-        Some(k) => println!("git: '{}' is not a git command. See 'git --help'.\n\nThe most similar command is\n\t{}", cmd, k)
-    }
 
     println!("{:?}", git.spell_check(cmd));
 }

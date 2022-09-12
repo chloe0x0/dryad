@@ -46,7 +46,7 @@ pub struct BKTree {
     root: Option<Box<BKNode>>,
     metric: fn(&str, &str) -> usize,
     node_count: usize,
-    ignore_re: Option<Regex>,
+    pub ignore_re: Option<Regex>,
 }
 
 impl BKTree {
@@ -74,15 +74,6 @@ impl BKTree {
         }
     }
     pub fn add_word(&mut self, word: &str) {
-        match self.ignore_re {
-            None => (),
-            Some(ref k) => {
-                if k.is_match(word) {
-                    return;
-                }
-            }
-        }
-
         self.node_count += 1;
         match self.root {
             None => {
@@ -113,6 +104,15 @@ impl BKTree {
         }
     }
     pub fn spell_check_word(&self, word: &str, k: usize) -> Option<&String> {
+        match self.ignore_re {
+            None => (),
+            Some(ref k) => {
+                if k.is_match(word) {
+                    return None;
+                }
+            }
+        }
+
         match self.root {
             None => None,
             Some(ref root) => {
