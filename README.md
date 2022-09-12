@@ -63,6 +63,7 @@ Hello +a+ +world+ +a+
 
 if the spell_check function does not ignore case
 ```console
+> cargo run --release
 Hello 215 wold 0
 +hello+ 215 +world+ 0
 ```
