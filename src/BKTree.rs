@@ -46,7 +46,7 @@ pub struct BKTree {
     root: Option<Box<BKNode>>,
     metric: fn(&str, &str) -> usize,
     node_count: usize,
-    pub ignore_re: Option<Regex>,
+    ignore_re: Option<Regex>,
 }
 
 impl BKTree {
@@ -61,7 +61,7 @@ impl BKTree {
     pub fn ignore(&mut self, re: &str) {
         self.ignore_re = Some(Regex::new(re).unwrap());
     }
-    pub fn read_corpus(&mut self, corpus: impl AsRef<Path>) {
+    pub fn read_dict(&mut self, corpus: impl AsRef<Path>) {
         let xs = read_lines(corpus);
 
         for word in xs.iter() {
@@ -103,7 +103,8 @@ impl BKTree {
             }
         }
     }
-    pub fn spell_check_word(&self, word: &str, k: usize) -> Option<&String> {
+    pub fn spell_check_word(&self, word: &str, k: usize, ingore_case: bool) -> Option<&String> {
+        // check if the incoming string matches the ignore regex
         match self.ignore_re {
             None => (),
             Some(ref k) => {
@@ -123,7 +124,13 @@ impl BKTree {
                 let mut best_k = usize::MAX;
 
                 while let Some(u) = S.pop_front() {
-                    let k_u = (self.metric)(&u.val, word);
+                    let mut k_u: usize = 0;
+                    if ingore_case {
+                        k_u = (self.metric)(&u.val.to_lowercase(), &word.to_lowercase());
+                    } else {
+                        k_u = (self.metric)(&u.val, word)
+                    }
+                    
                     if k_u < best_k {
                         best_node = Some(&u);
                         best_k = k_u;
@@ -138,22 +145,30 @@ impl BKTree {
                     }
                 }
 
-                if &best_node.unwrap().val.as_str() == &word {
-                    None
+                if ingore_case {
+                    if &best_node.unwrap().val.as_str().to_lowercase() == &word.to_lowercase() {
+                        return None;
+                    }
                 } else {
-                    Some(&best_node.unwrap().val)
+                    if &best_node.unwrap().val.as_str() == &word {
+                        return None;
+                    }
                 }
+
+                Some(&best_node.unwrap().val)
             }
         }
     }
     #[inline(always)]
-    pub fn spell_check(&self, text: &str) -> Vec<(String, String)> {
+    pub fn spell_check(&self, text: &str, ingore_case: bool) -> Vec<(String, String)> {
         text.split(" ")
-            .filter(|x| !self.spell_check_word(&x, 1).is_none())
+            .filter(|x| !self.spell_check_word(&x, 1, ingore_case).is_none())
             .map(|x| {
                 (
                     x.to_string(),
-                    self.spell_check_word(x, 1).unwrap().to_string(),
+                    self.spell_check_word(x, 1, ingore_case)
+                        .unwrap()
+                        .to_string(),
                 )
             })
             .collect()

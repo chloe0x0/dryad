@@ -16,6 +16,37 @@ fn main() {
 }
 ```
 
+### Ignoring substrings that match a regex
+it may be the case that you do not want Dryad to suggest correcting digits. ie: changing 1 => "a"
+
+It is simple to specify an ignore regex. Any substrings which match this regex will simply be ignored
+```rust
+use bktree::*;
+use metric::lev;
+
+fn main() {
+    let mut tree = BKTree::new(lev);
+    tree.read_dict("../dicts/MIT.txt");
+    tree.ignore(r"[0-9]+");
+
+    let mut input = String::from("Hello wold");
+   
+    // generate a Vec<(String, String)> in which the first element is the original string
+    // and the second element is the suggested correction
+    // BKTree::spell_check takes the input string and a boolean indicating whether or not to ignore case
+    let corrections = tree.spell_check(&input, true);
+
+    println!("{}", input);
+
+    for word in input.split(" ") {
+        match corrections.iter().find(|(x, y)| &x==&word) {
+            None => print!("{} ", word),
+            Some(ref k) => print!("+{}+ ", k.1)
+        }
+    }
+}
+```
+
 ### Create a git command checker
 if one gives git a command it does not recognize it will reccomend similarly spelled commands. 
 eg: 

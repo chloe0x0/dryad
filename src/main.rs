@@ -7,12 +7,20 @@ use bktree::*;
 use std::io;
 
 fn main() {
-    // build a system similar to git command spell check with Dryad
-    let mut git = BKTree::new(lev);
-    git.read_vec(vec!["push", "pull", "branch", "commit"]);
-    git.ignore(r"[0-9]+");
-    let cmd = "comiitt 2147190 128590 85 brach";
+    let mut tree = BKTree::new(lev);
+    tree.read_dict("../dicts/MIT.txt");
+    tree.ignore(r"[0-9]+");
 
+    let mut input = String::from("Hello wold 0");
+   
+    let corrections = tree.spell_check(&input, true);
 
-    println!("{:?}", git.spell_check(cmd));
+    println!("{}", input);
+
+    for word in input.split(" ") {
+        match corrections.iter().find(|(x, y)| &x==&word) {
+            None => print!("{} ", word),
+            Some(ref k) => print!("+{}+ ", k.1)
+        }
+    }
 }
