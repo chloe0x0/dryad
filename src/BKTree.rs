@@ -12,6 +12,10 @@ use std::{
     path::Path,
 };
 
+extern crate rand;
+
+use rand::{seq::SliceRandom, thread_rng};
+
 use regex::Regex;
 
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
@@ -29,6 +33,7 @@ struct BKNode {
 }
 
 impl BKNode {
+    #[inline]
     fn new(s: &str) -> Self {
         BKNode {
             val: s.to_string(),
@@ -59,10 +64,12 @@ impl BKTree {
         }
     }
     pub fn ignore(&mut self, re: &str) {
-        self.ignore_re = Some(Regex::new(re).unwrap());
+        self.ignore_re = Some(Regex::new(re).expect("Invalid regex!"));
     }
-    pub fn read_dict(&mut self, corpus: impl AsRef<Path>) {
-        let xs = read_lines(corpus);
+    pub fn read_dict<P: AsRef<Path>>(&mut self, corpus: P) {
+        let mut xs = read_lines(corpus);
+
+        // xs.shuffle(&mut thread_rng());
 
         for word in xs.iter() {
             self.add_word(word.as_str());
@@ -103,7 +110,7 @@ impl BKTree {
             }
         }
     }
-    pub fn spell_check_word(&self, word: &str, k: usize, ingore_case: bool) -> Option<&String> {
+    pub fn query(&self, word: &str, k: usize, ingore_case: bool, stats: bool) -> Option<&String> {
         // check if the incoming string matches the ignore regex
         match self.ignore_re {
             None => (),
@@ -113,6 +120,8 @@ impl BKTree {
                 }
             }
         }
+
+        let mut nodes_searched: usize = 1;
 
         match self.root {
             None => None,
@@ -124,6 +133,7 @@ impl BKTree {
                 let mut best_k = usize::MAX;
 
                 while let Some(u) = S.pop_front() {
+                    nodes_searched += 1;
                     let mut k_u: usize = 0;
                     if ingore_case {
                         k_u = (self.metric)(&u.val.to_lowercase(), &word.to_lowercase());
@@ -145,6 +155,14 @@ impl BKTree {
                     }
                 }
 
+                if stats {
+                    println!(
+                        "Given {}: Examined {}% of the tree",
+                        word,
+                        ((nodes_searched as f64 / self.node_count as f64) * 100.0) as usize
+                    );
+                }
+
                 if ingore_case {
                     if &best_node.unwrap().val.as_str().to_lowercase() == &word.to_lowercase() {
                         return None;
@@ -160,15 +178,13 @@ impl BKTree {
         }
     }
     #[inline(always)]
-    pub fn spell_check(&self, text: &str, ingore_case: bool) -> Vec<(String, String)> {
+    pub fn spell_check(&self, text: &str, k: usize, ingore_case: bool, stats: bool) -> Vec<(String, String)> {
         text.split(" ")
-            .filter(|x| !self.spell_check_word(&x, 1, ingore_case).is_none())
+            .filter(|x| !self.query(&x, k, ingore_case, stats).is_none())
             .map(|x| {
                 (
                     x.to_string(),
-                    self.spell_check_word(x, 1, ingore_case)
-                        .unwrap()
-                        .to_string(),
+                    self.query(x, k, ingore_case, stats).unwrap().to_string(),
                 )
             })
             .collect()
