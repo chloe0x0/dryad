@@ -8,15 +8,14 @@ use std::{
     collections::VecDeque,
     convert::TryInto,
     fs::File,
-    io::{self, BufRead, BufReader},
+    io::{BufRead, BufReader},
     path::Path,
 };
 
-extern crate rand;
-
-use rand::{seq::SliceRandom, thread_rng};
-
 use regex::Regex;
+
+// if the end of a string is punctuated, trim it
+static punc: [char; 8] = ['!', '?', ';', ':', ',', '"', '\'', '.'];
 
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
     BufReader::new(File::open(path).expect("Could not open file!"))
@@ -110,7 +109,7 @@ impl BKTree {
             }
         }
     }
-    pub fn query(&self, word: &str, k: usize, ingore_case: bool, stats: bool) -> Option<&String> {
+    pub fn query(&self, word: &str, k: usize, ingore_case: bool) -> Option<&String> {
         // check if the incoming string matches the ignore regex
         match self.ignore_re {
             None => (),
@@ -120,8 +119,6 @@ impl BKTree {
                 }
             }
         }
-
-        let mut nodes_searched: usize = 1;
 
         match self.root {
             None => None,
@@ -133,7 +130,6 @@ impl BKTree {
                 let mut best_k = usize::MAX;
 
                 while let Some(u) = S.pop_front() {
-                    nodes_searched += 1;
                     let mut k_u: usize = 0;
                     if ingore_case {
                         k_u = (self.metric)(&u.val.to_lowercase(), &word.to_lowercase());
@@ -155,14 +151,6 @@ impl BKTree {
                     }
                 }
 
-                if stats {
-                    println!(
-                        "Given {}: Examined {}% of the tree",
-                        word,
-                        ((nodes_searched as f64 / self.node_count as f64) * 100.0) as usize
-                    );
-                }
-
                 if ingore_case {
                     if &best_node.unwrap().val.as_str().to_lowercase() == &word.to_lowercase() {
                         return None;
@@ -178,13 +166,18 @@ impl BKTree {
         }
     }
     #[inline(always)]
-    pub fn spell_check(&self, text: &str, k: usize, ingore_case: bool, stats: bool) -> Vec<(String, String)> {
+    pub fn spell_check(
+        &self,
+        text: &str,
+        k: usize,
+        ingore_case: bool,
+    ) -> Vec<(String, String)> {
         text.split(" ")
-            .filter(|x| !self.query(&x, k, ingore_case, stats).is_none())
+            .filter(|x| !self.query(&x, k, ingore_case).is_none())
             .map(|x| {
                 (
                     x.to_string(),
-                    self.query(x, k, ingore_case, stats).unwrap().to_string(),
+                    self.query(x, k, ingore_case).unwrap().to_string(),
                 )
             })
             .collect()

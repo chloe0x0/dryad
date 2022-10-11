@@ -34,18 +34,3 @@ pub fn lev(s0: &str, s1: &str) -> usize {
 
     return row[len_1];
 }
-
-pub fn ham(s0: &str, s1: &str) -> usize {
-    assert_eq!(s0.chars().count(), s1.chars().count());
-
-    let mut x: usize = 0;
-    for t in s0.chars().zip(s1.chars()) {
-        x += (t.0 != t.1) as usize;
-    }
-
-    return x;
-}
-
-fn main() {
-    assert_eq!(lev("sitting", "kitten"), 3);
-}
