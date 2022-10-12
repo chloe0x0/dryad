@@ -1,8 +1,4 @@
 //! Implementation of BK-Trees with strings in mind
-//! Metrics should be taken from metric.rs, but there is nothing stopping the curious from experimenting with custom string metrics
-
-// TODO
-// Use multithreading to speed up indexing and search
 
 use std::{
     collections::VecDeque,
@@ -14,20 +10,22 @@ use std::{
 
 use regex::Regex;
 
-// if the end of a string is punctuated, trim it
-static punc: [char; 8] = ['!', '?', ';', ':', ',', '"', '\'', '.'];
-
+/// Read each line of a text file into a vector
+/// Used to read dictionaries into memory
 fn read_lines(path: impl AsRef<Path>) -> Vec<String> {
     BufReader::new(File::open(path).expect("Could not open file!"))
         .lines()
-        .map(|x| x.expect("Could not read line {x}"))
+        .map(|x| x.expect("Could not read line: {x}"))
         .collect()
 }
 
-// BKNodes store their string value, as well as a vector of arcs weighted by the metric used
 #[derive(Debug)]
+/// A single node in a BKTree.
+/// BKNodes store their string value, as well as a vector of arcs weighted by the metric used
 struct BKNode {
+    /// The string stored in the node
     val: String,
+    /// The node's children. Each edge is weighted by their distance
     children: Vec<(BKNode, usize)>,
 }
 
@@ -41,44 +39,74 @@ impl BKNode {
     }
 }
 
-// It would probably be useful to have an O(1) way of returning immediatley if a word is known to be in the dictionary
-// Can store a Hashset of all the Strings....
-// Sounds scary, lots of space O(k) for k unique words in the corpus,
-// Bloom filters should be killer for this
-
+/// A struct for a BKTree data structure
+/// Each node stores a word, as the tree is intended to be used for Spell Checking and fuzzy string search
 pub struct BKTree {
+    /// The root node of the tree
     root: Option<Box<BKNode>>,
+    /// The distance metric used by the tree
     metric: fn(&str, &str) -> usize,
+    /// The number of nodes in the tree
     node_count: usize,
+    /// An optional regex used by the tree to ignore certain strings (eg: numbers)
     ignore_re: Option<Regex>,
+    /// A boolean indicating whether or not to ignore casing (treat 'heLlO' the same as 'hello')
+    ignore_case: bool,
 }
 
 impl BKTree {
-    pub fn new(f: fn(&str, &str) -> usize) -> Self {
+    /// Construct a BKTree given its distance metric
+    /// # Arguments
+    /// * 'f' - a function of the form: fn(&str, &str) -> usize to be used as the distance function
+    /// * 'ignore_case' - a boolean indicating whether or not the tree will ignore the case of characters
+    /// eg: "hELlO" will be treated the same as "hello"
+    pub fn new(f: fn(&str, &str) -> usize, ignore_case: bool) -> Self {
         BKTree {
             root: None,
             metric: f,
             node_count: 0,
             ignore_re: None,
+            ignore_case: ignore_case,
         }
     }
+    #[inline]
+    /// Set the tree's ignore regex
+    /// any incoming strings which match the regex are ignored and no effort is made to suggest corrections
     pub fn ignore(&mut self, re: &str) {
         self.ignore_re = Some(Regex::new(re).expect("Invalid regex!"));
     }
+    /// Helper function
+    /// Given the path to a txt file of words, read all of them into the tree
     pub fn read_dict<P: AsRef<Path>>(&mut self, corpus: P) {
-        let mut xs = read_lines(corpus);
-
-        // xs.shuffle(&mut thread_rng());
-
-        for word in xs.iter() {
-            self.add_word(word.as_str());
+        match self.ignore_case {
+            false => {
+                for word in read_lines(corpus).iter() {
+                    self.add_word(word.as_str());
+                }
+            }
+            true => {
+                for word in read_lines(corpus).iter() {
+                    self.add_word(word.to_lowercase().as_str());
+                }
+            }
         }
     }
+    /// Insert a vector of strings into the tree
     pub fn read_vec(&mut self, corpus: Vec<&str>) {
-        for word in corpus.iter() {
-            self.add_word(word);
+        match self.ignore_case {
+            false => {
+                for word in corpus.iter() {
+                    self.add_word(word);
+                }
+            }
+            true => {
+                for word in corpus.iter() {
+                    self.add_word(word.to_lowercase().as_str());
+                }
+            }
         }
     }
+    /// Adds a string into the tree
     pub fn add_word(&mut self, word: &str) {
         self.node_count += 1;
         match self.root {
@@ -109,7 +137,8 @@ impl BKTree {
             }
         }
     }
-    pub fn query(&self, word: &str, k: usize, ingore_case: bool) -> Option<&String> {
+    /// Returns the best correction given a string and the max edit distance
+    pub fn query(&self, word: &str, k: usize) -> Option<&String> {
         // check if the incoming string matches the ignore regex
         match self.ignore_re {
             None => (),
@@ -130,12 +159,7 @@ impl BKTree {
                 let mut best_k = usize::MAX;
 
                 while let Some(u) = S.pop_front() {
-                    let mut k_u: usize = 0;
-                    if ingore_case {
-                        k_u = (self.metric)(&u.val.to_lowercase(), &word.to_lowercase());
-                    } else {
-                        k_u = (self.metric)(&u.val, word)
-                    }
+                    let mut k_u: usize = (self.metric)(&u.val, word);
 
                     if k_u < best_k {
                         best_node = Some(&u);
@@ -151,35 +175,36 @@ impl BKTree {
                     }
                 }
 
-                if ingore_case {
-                    if &best_node.unwrap().val.as_str().to_lowercase() == &word.to_lowercase() {
-                        return None;
-                    }
-                } else {
-                    if &best_node.unwrap().val.as_str() == &word {
-                        return None;
-                    }
-                }
-
                 Some(&best_node.unwrap().val)
             }
         }
     }
-    #[inline(always)]
-    pub fn spell_check(
-        &self,
-        text: &str,
-        k: usize,
-        ingore_case: bool,
-    ) -> Vec<(String, String)> {
-        text.split(" ")
-            .filter(|x| !self.query(&x, k, ingore_case).is_none())
-            .map(|x| {
-                (
-                    x.to_string(),
-                    self.query(x, k, ingore_case).unwrap().to_string(),
-                )
-            })
-            .collect()
+    /// Return a vector of corrections and their corresponding distances given a word/ string as well as the max distance
+    pub fn corrections(&self, word: &str, k: usize) -> Vec<(&str, usize)> {
+        match self.root {
+            None => Vec::new(),
+            Some(ref root) => {
+                let mut S: VecDeque<&BKNode> = VecDeque::new();
+                S.push_back(root);
+
+                let mut corrections: Vec<(&str, usize)> = Vec::new();
+
+                while let Some(u) = S.pop_front() {
+                    let dist = (self.metric)(&u.val, word);
+
+                    if dist <= k {
+                        corrections.push((u.val.as_str(), dist));
+                    }
+
+                    for v in u.children.iter().filter(|(_, d)| (*d as isize - dist as isize).abs() <= k as isize) {
+                        let (v_node, _) = v;
+                        // Cutoff criterion
+                        S.push_back(v_node);
+                    }
+                }
+
+                corrections
+            }
+        }
     }
 }

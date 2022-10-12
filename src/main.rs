@@ -1,20 +1,15 @@
 use dryad::{bktree::BKTree, metric::lev};
 
 fn main() {
-    let mut tree = BKTree::new(lev);
-    tree.read_dict("../dicts/MIT.txt");
-    tree.ignore(r"[0-9]+");
+    let mut tree = BKTree::new(lev, true);
+    tree.read_vec(vec![
+        "book", "books", "cake", "boo", "boon", "cook", "cake", "cape", "cart",
+    ]);
 
-    let input = String::from("hEll world!");
+    // [book, boo, boon]
+    println!("{:?}", tree.corrections("bo", 2));
+    
 
-    let corrections = tree.spell_check(&input, 1, true);
-
-    println!("{}", input);
-
-    for word in input.split(" ") {
-        match corrections.iter().find(|(x, y)| &x == &word) {
-            None => print!("{} ", word),
-            Some(ref k) => print!("+{}+ ", k.1),
-        }
-    }
+    // [cake, cape, cart]
+    println!("{:?}", tree.corrections("ca", 2));
 }
