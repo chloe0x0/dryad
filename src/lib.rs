@@ -2,7 +2,7 @@
 //! A spell checking and fuzzy string search library in Rust using BK-Trees
 //! Metrics should be taken from metric.rs, but there is nothing stopping the curious from experimenting with custom string metrics
 //! Dryad will NOT verify that your custom function is indeed a valid distance metric
-//! 
+//!
 //! ```rust
 //! use dryad::{bktree::BKTree, metric::lev};
 //! let mut tree = BKTree::new(lev, true);
@@ -17,7 +17,7 @@
 //! // [cake, cape, cart]
 //! println!("{:?}", tree.corrections("ca", 2));
 //! ```
-//! 
+//!
 
 pub mod bktree;
 pub mod metric;

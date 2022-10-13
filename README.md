@@ -6,7 +6,7 @@ BK-Trees
 
 ### Creating a BK-Tree
 ```rust
-use dryad::{bktree::BKTree, metric::lev};
+use dryad::*;
 
 fn main() {
     // The BK-Tree constructor only needs a metric function
@@ -20,7 +20,7 @@ fn main() {
 ## A working example
 
 ```rust
-use dryad::{bktree::BKTree, metric::lev};
+use dryad::*;
 
 fn main() {
     let mut tree = BKTree::new(lev, true);

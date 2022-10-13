@@ -1,4 +1,4 @@
-use dryad::{bktree::BKTree, metric::lev};
+use dryad::*;
 
 fn main() {
     let mut tree = BKTree::new(lev, true);
@@ -8,7 +8,6 @@ fn main() {
 
     // [book, boo, boon]
     println!("{:?}", tree.corrections("bo", 2));
-    
 
     // [cake, cape, cart]
     println!("{:?}", tree.corrections("ca", 2));
